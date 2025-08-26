@@ -4,7 +4,7 @@ export interface FolderEntity {
     path: string;
     parentId: string | null;
     size?: number | null;
-    createAt: Date;
+    createdAt: Date;
     updatedAt: Date;
 }
 
