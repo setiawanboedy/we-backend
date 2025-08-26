@@ -38,4 +38,13 @@ export class FolderController {
             return ResponseFormatter.error(error, 'Failed retrieve folders');
         }
     }
+
+    async getRootFolders(): Promise<ApiResponse<FolderEntity[]>> {
+        try {
+            const folders = await this.folderService.getRootFolders();
+            return ResponseFormatter.success(folders, 'Folders retrieved successfully');
+        } catch (error) {
+            return ResponseFormatter.error(error, 'Failed retrieve folders');
+        }
+    }
 }

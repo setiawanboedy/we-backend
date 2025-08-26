@@ -1,5 +1,7 @@
 import { Elysia } from 'elysia';
 import { connectDatabase } from './infrastructure/database/prisma';
+import { createApiRoutes } from './presentation/routes/apiRoutes';
+import { Injection } from './di/injection';
 
 const app = new Elysia()
     .onStart(async () => {
@@ -9,6 +11,9 @@ const app = new Elysia()
             process.exit(1);
         }
     });
+
+const injection = Injection.getInstance();    
+app.use(createApiRoutes(injection.folderController));    
 
 app.listen(3000);
 
