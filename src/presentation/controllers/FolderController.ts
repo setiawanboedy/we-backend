@@ -21,7 +21,7 @@ export class FolderController {
             const id = params.id;
             const folder = await this.folderService.getFolderById(id);
             if (!folder) {
-                return ResponseFormatter.handlerError('Folder not found');
+                return ResponseFormatter.handleError('Folder not found');
             }
             return ResponseFormatter.success(folder, 'Folder retrieved successfully');
         } catch (error) {
