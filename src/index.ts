@@ -1,9 +1,9 @@
 import { Elysia } from 'elysia';
 import { createApiRoutes } from './presentation/routes/apiRoutes';
-import { Injection } from './di/injection';
 import cors from '@elysiajs/cors';
 import swagger from '@elysiajs/swagger';
 import { createBaseRoutes } from './presentation/routes/baseRoutes';
+import { Injection } from './di/Injection';
 
 const app = new Elysia()
     .use(cors({
