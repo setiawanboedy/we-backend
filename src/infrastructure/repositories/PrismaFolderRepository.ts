@@ -20,11 +20,11 @@ export class PrismaFolderRepository implements FolderRepository {
     return folder;
   }
   async findByParentId(parentId: string | null): Promise<FolderEntity[]> {
-    const folder = await prisma.folder.findMany({
+    const folders = await prisma.folder.findMany({
       where: { parentId },
       orderBy: { name: "asc" },
     });
-    return folder;
+    return folders;
   }
   async findRootFolders(): Promise<FolderEntity[]> {
     const folders = await prisma.folder.findMany({

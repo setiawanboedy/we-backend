@@ -2,9 +2,9 @@ import Elysia, { t } from "elysia";
 import type { FolderController } from "../controllers/FolderController";
 
 export function createFolderRoutes(folderController: FolderController) {
-  return new Elysia({ prefix: "/folders" })
+  return new Elysia({ prefix: '/folders' })
 
-    .get("/", () => folderController.getAllFolders(), {
+    .get('/', () => folderController.getAllFolders(), {
       detail: {
         tags: ["Folders"],
         summary: "Get all folders with hierarchy",
@@ -13,7 +13,7 @@ export function createFolderRoutes(folderController: FolderController) {
       },
     })
 
-    .get("/root", () => folderController.getRootFolders(), {
+    .get('/root', () => folderController.getRootFolders(), {
       detail: {
         tags: ["Folders"],
         summary: "Get root folders",
@@ -22,7 +22,7 @@ export function createFolderRoutes(folderController: FolderController) {
       },
     })
 
-    .get("/:id", ({ params }) => folderController.getFolderById(params), {
+    .get('/:id', ({ params }) => folderController.getFolderById(params), {
       params: t.Object({
         id: t.String(),
       }),
@@ -33,9 +33,7 @@ export function createFolderRoutes(folderController: FolderController) {
       },
     })
 
-    .get(
-      "/:id/children",
-      ({ params }) => folderController.getFolderChildren(params),
+    .get('/:id/children', ({ params }) => folderController.getFolderChildren(params),
       {
         params: t.Object({
           id: t.String(),
@@ -48,7 +46,7 @@ export function createFolderRoutes(folderController: FolderController) {
       }
     )
 
-    .post("/", ({ body }) => folderController.createFolder(body), {
+    .post('/', ({ body }) => folderController.createFolder(body), {
       body: t.Object({
         name: t.String(),
         path: t.String(),
@@ -62,7 +60,7 @@ export function createFolderRoutes(folderController: FolderController) {
       },
     })
 
-    .put("/:id", ({ params, body }) => folderController.updateFolder(params, body),
+    .put('/:id', ({ params, body }) => folderController.updateFolder(params, body),
       {
         params: t.Object({
           id: t.String(),
@@ -80,7 +78,7 @@ export function createFolderRoutes(folderController: FolderController) {
       }
     )
 
-    .delete("/:id", ({ params }) => folderController.deleteFolder(params), {
+    .delete('/:id', ({ params }) => folderController.deleteFolder(params), {
       params: t.Object({
         id: t.String(),
       }),

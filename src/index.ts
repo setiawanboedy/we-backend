@@ -4,6 +4,7 @@ import cors from '@elysiajs/cors';
 import swagger from '@elysiajs/swagger';
 import { createBaseRoutes } from './presentation/routes/baseRoutes';
 import { Injection } from './di/Injection';
+import { seedDatabase } from './infrastructure/database/seed';
 
 const app = new Elysia()
     .use(cors({
@@ -22,7 +23,10 @@ const app = new Elysia()
                 { name: 'Folders', description: 'Folder management endpoints' }
             ]
         }
-    }));
+    }))
+    .onStart(async () => {
+        await seedDatabase();
+    });
 
 const injection = Injection.getInstance();    
 app.use(createBaseRoutes(injection.baseController));

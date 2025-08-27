@@ -60,7 +60,7 @@ export class FolderValidator {
     return validated;
   }
   static validateId(id: string): string {
-    if (!id || id !== "string") {
+    if (!id || typeof id !== 'string') {
       throw new ValidationError("ID is required and must be a string");
     }
     return id.trim();
