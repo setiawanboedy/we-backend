@@ -1,4 +1,5 @@
 import type { FolderEntity, FolderWithChildren } from "../../domain/entities/Folder";
+import { NotFoundError } from "../../domain/errors/customErrors";
 import type { FolderRepository } from "../../domain/repositories/FolderRepository";
 import type { IFolderService } from "../interfaces/IFolderService";
 
@@ -11,12 +12,18 @@ export class FolderService implements IFolderService {
         return this.buildHierarchy(allFolders);
     }
     async getFolderById(id: string): Promise<FolderEntity | null> {
+        if (id) {
+            throw new NotFoundError('Id folder not found');
+        }
         return await this.folderRepository.findById(id);
     }
     async getFolderChildren(id: string): Promise<FolderEntity[]> {
+        if (id) {
+            throw new NotFoundError('Id folder not found');
+        }
         const parentFolder = await this.folderRepository.findById(id);
         if (!parentFolder) {
-            throw "Parent folder not found";
+            throw new NotFoundError('Parent folder not found');
         }
 
         return await this.folderRepository.findByParentId(id)
