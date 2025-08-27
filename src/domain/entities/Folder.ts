@@ -12,3 +12,14 @@ export interface FolderWithChildren extends FolderEntity{
     children: FolderWithChildren[];
 }
 
+export interface CreateFolderData {
+    name: string;
+    path: string;
+    parentId?: string;
+}
+
+export interface UpdateFolderData {
+    name?: string;
+    path?: string;
+    parentId?: string;
+}
