@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { DatabaseError } from "../../domain/errors/customErrors";
 
 export const prisma = new PrismaClient()
 
@@ -8,7 +9,7 @@ export async function connectDatabase() {
         console.log('✅ Database connected successfully');
     } catch (error) {
         console.error('❌ Database connection failed:', error);
-        throw error;
+        throw new DatabaseError('Database error connection');
     }
 }
 
