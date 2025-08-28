@@ -92,6 +92,10 @@ export class FileValidator {
     if (!id || typeof id !== 'string') {
       throw new ValidationError("ID is required and must be a string");
     }
-    return id.trim();
+    const trimmedId = id.trim();
+    if (!trimmedId) {
+      throw new ValidationError("ID cannot be empty or whitespace only");
+    }
+    return trimmedId;
   }
 }
