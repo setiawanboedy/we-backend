@@ -1,5 +1,5 @@
 import type { IFileService } from "../../application/interfaces/IFileService";
-import type { FileEntity } from "../../domain/entities/File";
+import type { FileEntity, SearchFileParams } from "../../domain/entities/File";
 import {
   ResponseFormatter,
   type ApiResponse,
@@ -8,18 +8,6 @@ import { FileValidator } from "../validators/FileValidator";
 
 export class FileController {
   constructor(private readonly fileService: IFileService) {}
-
-  async getAllFiles(): Promise<ApiResponse<FileEntity[]>> {
-    try {
-      const files = await this.fileService.getAllFiles();
-      return ResponseFormatter.success(
-        files,
-        "Files retrieved successfully"
-      );
-    } catch (error) {
-      return ResponseFormatter.error(error, "Failed to retrieve files");
-    }
-  }
 
   async getFileById(params: {
     id: string;
@@ -48,6 +36,19 @@ export class FileController {
       );
     } catch (error) {
       return ResponseFormatter.error(error, "Failed to retrieve files");
+    }
+  }
+
+  async searchFiles(query: SearchFileParams): Promise<ApiResponse<FileEntity[]>> {
+    try {
+
+      const files = await this.fileService.searchFiles(query);
+      return ResponseFormatter.success(
+        files,
+        "Files search completed successfully"
+      );
+    } catch (error) {
+      return ResponseFormatter.error(error, "Failed to search files");
     }
   }
 

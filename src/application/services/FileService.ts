@@ -2,6 +2,7 @@ import type {
   CreateFileData,
   FileEntity,
   UpdateFileData,
+  SearchFileParams,
 } from "../../domain/entities/File";
 import { LogicError, NotFoundError } from "../../domain/errors/customErrors";
 import type { FileRepository } from "../../domain/repositories/FileRepository";
@@ -16,9 +17,6 @@ export class FileService implements IFileService {
     private readonly logger: ILogger
   ) {}
 
-  async getAllFiles(): Promise<FileEntity[]> {
-    return await this.fileRepository.findAll();
-  }
 
   async getFileById(id: string): Promise<FileEntity | null> {
     return await this.fileRepository.findById(id);
@@ -32,6 +30,10 @@ export class FileService implements IFileService {
     }
 
     return await this.fileRepository.findByFolderId(folderId);
+  }
+
+  async searchFiles(query: SearchFileParams): Promise<FileEntity[]> {
+    return await this.fileRepository.searchFiles(query);
   }
 
   async createFile(data: CreateFileData): Promise<FileEntity> {
@@ -52,10 +54,6 @@ export class FileService implements IFileService {
     }
 
     const createdFile = await this.fileRepository.create(data);
-    this.logger.info("File created successfully", {
-      fileId: createdFile.id,
-      path: createdFile.path,
-    });
     return createdFile;
   }
 
@@ -95,10 +93,6 @@ export class FileService implements IFileService {
       throw new NotFoundError("File not found");
     }
 
-    this.logger.info("File updated successfully", {
-      fileId: updatedFile.id,
-      path: updatedFile.path,
-    });
     return updatedFile;
   }
 
@@ -115,10 +109,6 @@ export class FileService implements IFileService {
       throw new NotFoundError("File not found");
     }
 
-    this.logger.info("File deleted successfully", {
-      fileId: deletedFile.id,
-      path: deletedFile.path,
-    });
     return deletedFile;
   }
 }

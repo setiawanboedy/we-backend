@@ -24,3 +24,9 @@ export interface UpdateFileData {
   mimeType?: string;
   folderId?: string;
 }
+
+export interface SearchFileParams {
+  name?: string;
+  limit?: number;
+  offset?: number;
+}

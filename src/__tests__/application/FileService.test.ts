@@ -3,7 +3,7 @@ import { FileService } from '../../application/services/FileService'
 import type { FileRepository } from '../../domain/repositories/FileRepository'
 import type { FolderRepository } from '../../domain/repositories/FolderRepository'
 import type { ILogger } from '../../infrastructure/logging/ILogger'
-import type { FileEntity, CreateFileData, UpdateFileData } from '../../domain/entities/File'
+import type { FileEntity, CreateFileData, UpdateFileData, SearchFileParams } from '../../domain/entities/File'
 import type { FolderEntity } from '../../domain/entities/Folder'
 import { LogicError, NotFoundError } from '../../domain/errors/customErrors'
 
@@ -28,6 +28,24 @@ class MockFileRepository implements FileRepository {
 
   async exists(path: string): Promise<boolean> {
     return this.files.some(f => f.path === path)
+  }
+
+  async searchFiles(query: SearchFileParams): Promise<FileEntity[]> {
+    let result = this.files
+
+    if (query.name) {
+      result = result.filter(f => f.name.toLowerCase().includes(query.name!.toLowerCase()))
+    }
+
+    if (query.offset) {
+      result = result.slice(query.offset)
+    }
+
+    if (query.limit) {
+      result = result.slice(0, query.limit)
+    }
+
+    return result
   }
 
   async create(data: CreateFileData): Promise<FileEntity> {
@@ -160,43 +178,6 @@ describe('FileService', () => {
   afterEach(() => {
     ;(mockFileRepository as MockFileRepository).files = []
     ;(mockFolderRepository as MockFolderRepository).folders = []
-  })
-
-  describe('getAllFiles', () => {
-    it('should return empty array when no files exist', async () => {
-      const result = await fileService.getAllFiles()
-      expect(result).toHaveLength(0)
-    })
-
-    it('should return all files', async () => {
-      const folder: FolderEntity = {
-        id: 'folder-1',
-        name: 'Test Folder',
-        path: '/test-folder',
-        parentId: null,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-      ;(mockFolderRepository as MockFolderRepository).folders.push(folder)
-
-      const file1 = await fileService.createFile({
-        name: 'file1.txt',
-        path: '/test-folder/file1.txt',
-        folderId: 'folder-1'
-      })
-
-      const file2 = await fileService.createFile({
-        name: 'file2.txt',
-        path: '/test-folder/file2.txt',
-        folderId: 'folder-1'
-      })
-
-      const result = await fileService.getAllFiles()
-
-      expect(result).toHaveLength(2)
-      expect(result).toContain(file1)
-      expect(result).toContain(file2)
-    })
   })
 
   describe('getFileById', () => {
@@ -454,8 +435,6 @@ describe('FileService', () => {
 
       expect(result).toEqual(createdFile)
 
-      const files = await fileService.getAllFiles()
-      expect(files).toHaveLength(0)
     })
 
     it('should throw NotFoundError when file does not exist', async () => {

@@ -2,17 +2,12 @@ import type {
   CreateFileData,
   FileEntity,
   UpdateFileData,
+  SearchFileParams,
 } from "../../domain/entities/File";
 import type { FileRepository } from "../../domain/repositories/FileRepository";
 import { prisma } from "../database/prisma";
 
 export class PrismaFileRepository implements FileRepository {
-  async findAll(): Promise<FileEntity[]> {
-    const files = await prisma.file.findMany({
-      orderBy: [{ folderId: "asc" }, { name: "asc" }],
-    });
-    return files;
-  }
 
   async findById(id: string): Promise<FileEntity | null> {
     const file = await prisma.file.findUnique({
@@ -41,6 +36,26 @@ export class PrismaFileRepository implements FileRepository {
       where: { path },
     });
     return file ? true : false;
+  }
+
+  async searchFiles(query: SearchFileParams): Promise<FileEntity[]> {
+    const where: any = {};
+
+    if (query.name) {
+      where.name = {
+        contains: query.name,
+        mode: 'insensitive'
+      };
+    }
+
+    const files = await prisma.file.findMany({
+      where,
+      orderBy: { name: "asc" },
+      ...(query.limit && { take: query.limit }),
+      ...(query.offset && { skip: query.offset }),
+    });
+
+    return files;
   }
 
   async create(data: CreateFileData): Promise<FileEntity> {

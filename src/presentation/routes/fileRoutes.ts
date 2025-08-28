@@ -1,16 +1,9 @@
 import Elysia, { t } from "elysia";
 import type { FileController } from "../controllers/FileController";
+import type { SearchFileParams } from "../../domain/entities/File";
 
 export function createFileRoutes(fileController: FileController) {
   return new Elysia({ prefix: '/files' })
-
-    .get('/', () => fileController.getAllFiles(), {
-      detail: {
-        tags: ["Files"],
-        summary: "Get all files",
-        description: "Retrieves all files in the system",
-      },
-    })
 
     .get('/:id', ({ params }) => fileController.getFileById(params), {
       params: t.Object({
@@ -31,6 +24,22 @@ export function createFileRoutes(fileController: FileController) {
         tags: ["Files"],
         summary: "Get files by folder ID",
         description: "Retrieves all files within the specified folder",
+      },
+    })
+
+    .get('/search', ({ query }) => fileController.searchFiles(query as SearchFileParams), {
+      query: t.Object({
+        name: t.Optional(t.String()),
+        path: t.Optional(t.String()),
+        mimeType: t.Optional(t.String()),
+        folderId: t.Optional(t.String()),
+        limit: t.Optional(t.Number()),
+        offset: t.Optional(t.Number()),
+      }),
+      detail: {
+        tags: ["Files"],
+        summary: "Search files",
+        description: "Search files by name, path, mimeType, folderId with optional pagination",
       },
     })
 

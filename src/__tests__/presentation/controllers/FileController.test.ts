@@ -1,13 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
 import { FileController } from '../../../presentation/controllers/FileController'
 import type { IFileService } from '../../../application/interfaces/IFileService'
-import type { FileEntity, CreateFileData, UpdateFileData } from '../../../domain/entities/File'
+import type { FileEntity, CreateFileData, UpdateFileData, SearchFileParams } from '../../../domain/entities/File'
 import { ValidationError, NotFoundError, LogicError } from '../../../domain/errors/customErrors'
 
 class MockFileService implements IFileService {
   public getAllFilesCallCount = 0
   public getFileByIdCallCount = 0
   public getFilesByFolderIdCallCount = 0
+  public searchFilesCallCount = 0
   public createFileCallCount = 0
   public updateFileCallCount = 0
   public deleteFileCallCount = 0
@@ -30,6 +31,12 @@ class MockFileService implements IFileService {
 
   async getFilesByFolderId(folderId: string): Promise<FileEntity[]> {
     this.getFilesByFolderIdCallCount++
+    if (this.mockError) throw this.mockError
+    return this.mockFiles
+  }
+
+  async searchFiles(query: SearchFileParams): Promise<FileEntity[]> {
+    this.searchFilesCallCount++
     if (this.mockError) throw this.mockError
     return this.mockFiles
   }
@@ -67,6 +74,7 @@ describe('FileController', () => {
     mockFileService.getAllFilesCallCount = 0
     mockFileService.getFileByIdCallCount = 0
     mockFileService.getFilesByFolderIdCallCount = 0
+    mockFileService.searchFilesCallCount = 0
     mockFileService.createFileCallCount = 0
     mockFileService.updateFileCallCount = 0
     mockFileService.deleteFileCallCount = 0
@@ -75,32 +83,6 @@ describe('FileController', () => {
     mockFileService.mockError = null
   })
 
-  describe('getAllFiles', () => {
-    it('should return success response with files', async () => {
-      const mockFiles: FileEntity[] = [
-        {
-          id: '1',
-          name: 'test-file.txt',
-          path: '/test-file.txt',
-          size: 1024,
-          mimeType: 'text/plain',
-          folderId: 'folder-1',
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }
-      ]
-      mockFileService.mockFiles = mockFiles
-
-      const result = await fileController.getAllFiles()
-
-      expect(result).toEqual({
-        success: true,
-        data: mockFiles,
-        message: 'Files retrieved successfully'
-      })
-      expect(mockFileService.getAllFilesCallCount).toBe(1)
-    })
-  })
 
   describe('getFileById', () => {
     it('should return success response with file', async () => {
@@ -136,6 +118,38 @@ describe('FileController', () => {
         error: 'File not found'
       })
       expect(mockFileService.getFileByIdCallCount).toBe(1)
+    })
+  })
+
+  describe('searchFiles', () => {
+    it('should return success response with search results', async () => {
+      const mockFiles: FileEntity[] = [
+        {
+          id: '1',
+          name: 'search-result.txt',
+          path: '/folder/search-result.txt',
+          size: 1024,
+          mimeType: 'text/plain',
+          folderId: 'folder-1',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      ]
+      mockFileService.mockFiles = mockFiles
+
+      const searchQuery = {
+        name: 'search',
+        mimeType: 'text/plain'
+      }
+
+      const result = await fileController.searchFiles(searchQuery)
+
+      expect(result).toEqual({
+        success: true,
+        data: mockFiles,
+        message: 'Files search completed successfully'
+      })
+      expect(mockFileService.searchFilesCallCount).toBe(1)
     })
   })
 
