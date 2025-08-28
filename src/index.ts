@@ -20,7 +20,8 @@ const app = new Elysia()
                 description: 'REST API for Windows Explorer-like application with Clean Architecture',
             },
             tags: [
-                { name: 'Folders', description: 'Folder management endpoints' }
+                { name: 'Folders', description: 'Folder management endpoints' },
+                { name: 'Files', description: 'File management endpoints' }
             ]
         }
     }))
@@ -30,7 +31,7 @@ const app = new Elysia()
 
 const injection = Injection.getInstance();    
 app.use(createBaseRoutes(injection.baseController));
-app.use(createApiRoutes(injection.folderController));    
+app.use(createApiRoutes(injection.folderController, injection.fileController));    
 
 app.listen(3000);
 
