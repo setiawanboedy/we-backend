@@ -40,4 +40,15 @@ This project is a REST API for a Windows Explorer-like application built using C
 - `prisma/` - Database schema and migrations
 - `logs/` - Application log files
 
+## Testing
+```bash
+# Run all tests
+bun test
+
+# Run tests in watch mode
+bun test --watch
+
+# Run with coverage
+bun test --coverage
+
 This project was created using Bun with focus on performance and good developer experience.
