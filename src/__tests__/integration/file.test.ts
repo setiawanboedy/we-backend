@@ -12,14 +12,11 @@ describe('File API Integration Tests', () => {
   beforeAll(async () => {
     console.log('✅ Database connected successfully')
 
-    // Get controllers from injection container
     const injection = Injection.getInstance()
 
-    // Create app with routes
     app = new Elysia()
       .use(createApiRoutes(injection.folderController, injection.fileController))
 
-    // Create test folder for file operations
     const testFolderResponse = await app.handle(
       new Request('http://localhost/api/v1/folders', {
         method: 'POST',
@@ -37,7 +34,6 @@ describe('File API Integration Tests', () => {
   })
 
   afterAll(async () => {
-    // Clean up test data
     if (testFileId) {
       await prisma.file.deleteMany({
         where: { folderId: testFolderId }
@@ -86,7 +82,7 @@ describe('File API Integration Tests', () => {
         })
       )
 
-      expect(response.status).toBe(200) // Elysia returns 200 by default for success
+      expect(response.status).toBe(200)
       const result = await response.json() as { success: boolean; data: { id: string; name: string; path: string; size?: number; mimeType?: string; folderId: string } }
       expect(result).toHaveProperty('success', true)
       expect(result.data).toHaveProperty('id')
@@ -98,7 +94,6 @@ describe('File API Integration Tests', () => {
     })
 
     it('should return error for duplicate path', async () => {
-      // Skip this test if testFileId is not set (previous test failed)
       if (!testFileId) {
         console.log('Skipping duplicate path test - no test file created')
         return
@@ -106,7 +101,7 @@ describe('File API Integration Tests', () => {
 
       const fileData = {
         name: 'duplicate-file.txt',
-        path: '/test-folder/test-file.txt', // Same path as previous test
+        path: '/test-folder/test-file.txt',
         size: 512,
         mimeType: 'text/plain',
         folderId: testFolderId
@@ -122,7 +117,7 @@ describe('File API Integration Tests', () => {
         })
       )
 
-      expect(response.status).toBe(200) // Elysia returns 200, but response indicates error
+      expect(response.status).toBe(200)
       const result = await response.json() as { success: boolean; error: string; details?: string }
       expect(result).toHaveProperty('success', false)
       expect(result).toHaveProperty('error', 'Logic Error')
@@ -132,7 +127,6 @@ describe('File API Integration Tests', () => {
 
   describe('GET /api/v1/files/:id', () => {
     it('should return file by id', async () => {
-      // Skip this test if testFileId is not set
       if (!testFileId) {
         console.log('Skipping get file by id test - no test file created')
         return
@@ -154,7 +148,6 @@ describe('File API Integration Tests', () => {
 
   describe('PUT /api/v1/files/:id', () => {
     it('should update file successfully', async () => {
-      // Skip this test if testFileId is not set
       if (!testFileId) {
         console.log('Skipping update file test - no test file created')
         return
@@ -185,7 +178,6 @@ describe('File API Integration Tests', () => {
 
   describe('DELETE /api/v1/files/:id', () => {
     it('should delete file successfully', async () => {
-      // Skip this test if testFileId is not set
       if (!testFileId) {
         console.log('Skipping delete file test - no test file created')
         return

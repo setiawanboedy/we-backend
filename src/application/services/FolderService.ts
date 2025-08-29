@@ -130,23 +130,24 @@ async deleteFolder(id: string): Promise<FolderEntity> {
     const folderMap = new Map<string, FolderWithChildren>();
     const rootFolder: FolderWithChildren[] = [];
 
-    folders.forEach((folder) => {
-      folderMap.set(folder.id, { ...folder, children: [] });
-    });
+    for (const folder of folders){
+      if (!folderMap.has(folder.id)) {
+        folderMap.set(folder.id, {...folder, children: []});
+      }
 
-    folders.forEach((folder) => {
       const folderWithChildren = folderMap.get(folder.id)!;
 
       if (folder.parentId) {
-        const parent = folderMap.get(folder.parentId);
-
-        if (parent) {
-          parent.children.push(folderWithChildren);
+        if (folderMap.has(folder.parentId)) {
+          const parent = folderMap.get(folder.parentId)!;
+          parent.children.push(folderWithChildren)
+        }else{
+          rootFolder.push(folderWithChildren)
         }
-      } else {
-        rootFolder.push(folderWithChildren);
+      }else{
+        rootFolder.push(folderWithChildren)
       }
-    });
+    }
     return rootFolder;
   }
 }

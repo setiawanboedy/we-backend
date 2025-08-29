@@ -69,6 +69,7 @@ export class FileController {
     params: { id: string },
     body: any
   ): Promise<ApiResponse<FileEntity>> {
+    
     try {
       const validId = FileValidator.validateId(params.id);
       const validatedData = FileValidator.validateUpdateFile(body);
