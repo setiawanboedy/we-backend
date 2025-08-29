@@ -94,11 +94,27 @@ class MockFileRepository implements FileRepository {
 
 class MockFolderRepository implements FolderRepository {
   public folders: FolderEntity[] = []
-
+  
   async findAll(): Promise<FolderEntity[]> {
     return this.folders
   }
+  
+  async searchFolders(query: SearchFileParams): Promise<FolderEntity[]> {
+    let result = this.folders
 
+    if (query.name) {
+      result = result.filter(f => f.name.toLowerCase().includes(query.name!.toLowerCase()))
+    }
+
+    if (query.offset) {
+      result = result.slice(query.offset)
+    }
+
+    if (query.limit) {
+      result = result.slice(0, query.limit)
+    }
+    return result
+  }
   async findById(id: string): Promise<FolderEntity | null> {
     return this.folders.find(f => f.id === id) || null
   }

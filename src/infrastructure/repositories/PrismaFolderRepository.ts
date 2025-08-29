@@ -1,3 +1,4 @@
+import { SearchFileParams } from "../../domain/entities/File";
 import type {
   CreateFolderData,
   FolderEntity,
@@ -19,6 +20,27 @@ export class PrismaFolderRepository implements FolderRepository {
     });
     return folder;
   }
+
+  async searchFolders(query: SearchFileParams): Promise<FolderEntity[]> {
+    const where: any = {};
+
+    if (query.name) {
+      where.name = {
+        contains: query.name,
+        mode: "insensitive",
+      };
+    }
+
+    const folders = await prisma.folder.findMany({
+      where,
+      orderBy: { name: "asc" },
+      ...(query.limit && { take: query.limit }),
+      ...(query.offset && { skip: query.offset }),
+    });
+
+    return folders;
+  }
+
   async findByParentId(parentId: string | null): Promise<FolderEntity[]> {
     const folders = await prisma.folder.findMany({
       where: { parentId },

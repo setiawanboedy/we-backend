@@ -1,4 +1,5 @@
 import type { IFolderService } from "../../application/interfaces/IFolderService";
+import { SearchFileParams } from "../../domain/entities/File";
 import type { FolderEntity } from "../../domain/entities/Folder";
 import {
   ResponseFormatter,
@@ -18,6 +19,20 @@ export class FolderController {
       );
     } catch (error) {
       return ResponseFormatter.error(error, "Failed to retieve folders");
+    }
+  }
+
+  async searchFolders(
+    query: SearchFileParams
+  ): Promise<ApiResponse<FolderEntity[]>> {
+    try {
+      const folders = await this.folderService.searchFolders(query);
+      return ResponseFormatter.success(
+        folders,
+        "Folders search completed successfully"
+      );
+    } catch (error) {
+      return ResponseFormatter.error(error, "Failed to search folders");
     }
   }
 

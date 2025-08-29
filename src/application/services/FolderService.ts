@@ -1,3 +1,4 @@
+import { SearchFileParams } from "../../domain/entities/File";
 import type {
   CreateFolderData,
   FolderEntity,
@@ -18,6 +19,10 @@ export class FolderService implements IFolderService {
   async getAllFolders(): Promise<FolderWithChildren[]> {
     const allFolders = await this.folderRepository.findAll();
     return this.buildHierarchy(allFolders);
+  }
+
+  async searchFolders(query: SearchFileParams): Promise<FolderEntity[]> {
+    return await this.folderRepository.searchFolders(query);
   }
 
   async getFolderById(id: string): Promise<FolderEntity | null> {
@@ -106,21 +111,21 @@ export class FolderService implements IFolderService {
       });
       throw new NotFoundError("Failed to update folder");
     }
-    
-    return updatedFolder;
-}
 
-async deleteFolder(id: string): Promise<FolderEntity> {
+    return updatedFolder;
+  }
+
+  async deleteFolder(id: string): Promise<FolderEntity> {
     const children = await this.folderRepository.findByParentId(id);
     for (const child of children) {
-        await this.deleteFolder(child.id);
+      await this.deleteFolder(child.id);
     }
-    
+
     const deletedFolder = await this.folderRepository.delete(id);
     if (!deletedFolder) {
-        this.logger.warn("Folder update failed - Folder not found", {
-          id: id,
-        });
+      this.logger.warn("Folder update failed - Folder not found", {
+        id: id,
+      });
       throw new NotFoundError("Folder not found");
     }
     return deletedFolder;
@@ -130,9 +135,9 @@ async deleteFolder(id: string): Promise<FolderEntity> {
     const folderMap = new Map<string, FolderWithChildren>();
     const rootFolder: FolderWithChildren[] = [];
 
-    for (const folder of folders){
+    for (const folder of folders) {
       if (!folderMap.has(folder.id)) {
-        folderMap.set(folder.id, {...folder, children: []});
+        folderMap.set(folder.id, { ...folder, children: [] });
       }
 
       const folderWithChildren = folderMap.get(folder.id)!;
@@ -140,12 +145,12 @@ async deleteFolder(id: string): Promise<FolderEntity> {
       if (folder.parentId) {
         if (folderMap.has(folder.parentId)) {
           const parent = folderMap.get(folder.parentId)!;
-          parent.children.push(folderWithChildren)
-        }else{
-          rootFolder.push(folderWithChildren)
+          parent.children.push(folderWithChildren);
+        } else {
+          rootFolder.push(folderWithChildren);
         }
-      }else{
-        rootFolder.push(folderWithChildren)
+      } else {
+        rootFolder.push(folderWithChildren);
       }
     }
     return rootFolder;
