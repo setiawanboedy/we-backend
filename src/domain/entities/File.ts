@@ -1,3 +1,5 @@
+import { SearchParams } from "./Base";
+
 export interface FileEntity {
   id: string;
   name: string;
@@ -25,8 +27,4 @@ export interface UpdateFileData {
   folderId?: string;
 }
 
-export interface SearchFileParams {
-  name?: string;
-  limit?: number;
-  offset?: number;
-}
+export type SearchFileParams = SearchParams

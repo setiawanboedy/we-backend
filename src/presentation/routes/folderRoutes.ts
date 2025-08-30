@@ -1,6 +1,6 @@
 import Elysia, { t } from "elysia";
 import type { FolderController } from "../controllers/FolderController";
-import { SearchFileParams } from "../../domain/entities/File";
+import { SearchFolderParams } from "../../domain/entities/Folder";
 
 export function createFolderRoutes(folderController: FolderController) {
   return new Elysia({ prefix: "/folders" })
@@ -16,13 +16,11 @@ export function createFolderRoutes(folderController: FolderController) {
 
     .get(
       "/search",
-      ({ query }) => folderController.searchFolders(query as SearchFileParams),
+      ({ query }) => folderController.searchFolders(query),
       {
+        
         query: t.Object({
           name: t.Optional(t.String()),
-          path: t.Optional(t.String()),
-          mimeType: t.Optional(t.String()),
-          folderId: t.Optional(t.String()),
           limit: t.Optional(t.Number()),
           offset: t.Optional(t.Number()),
         }),

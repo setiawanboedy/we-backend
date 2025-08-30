@@ -1,7 +1,7 @@
-import { SearchFileParams } from "../../domain/entities/File";
 import type {
   CreateFolderData,
   FolderEntity,
+  SearchFolderParams,
   UpdateFolderData,
 } from "../../domain/entities/Folder";
 import type { FolderRepository } from "../../domain/repositories/FolderRepository";
@@ -21,7 +21,7 @@ export class PrismaFolderRepository implements FolderRepository {
     return folder;
   }
 
-  async searchFolders(query: SearchFileParams): Promise<FolderEntity[]> {
+  async searchFolders(query: SearchFolderParams): Promise<FolderEntity[]> {
     const where: any = {};
 
     if (query.name) {

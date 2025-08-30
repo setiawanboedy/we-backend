@@ -1,6 +1,5 @@
 import type { IFolderService } from "../../application/interfaces/IFolderService";
-import { SearchFileParams } from "../../domain/entities/File";
-import type { FolderEntity } from "../../domain/entities/Folder";
+import type { FolderEntity, SearchFolderParams } from "../../domain/entities/Folder";
 import {
   ResponseFormatter,
   type ApiResponse,
@@ -23,10 +22,13 @@ export class FolderController {
   }
 
   async searchFolders(
-    query: SearchFileParams
+    query: SearchFolderParams
   ): Promise<ApiResponse<FolderEntity[]>> {
+   
+
     try {
       const folders = await this.folderService.searchFolders(query);
+      console.debug(folders);
       return ResponseFormatter.success(
         folders,
         "Folders search completed successfully"

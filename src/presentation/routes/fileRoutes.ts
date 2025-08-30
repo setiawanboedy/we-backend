@@ -27,12 +27,9 @@ export function createFileRoutes(fileController: FileController) {
       },
     })
 
-    .get('/search', ({ query }) => fileController.searchFiles(query as SearchFileParams), {
+    .get('/search', ({ query }) => fileController.searchFiles(query), {
       query: t.Object({
         name: t.Optional(t.String()),
-        path: t.Optional(t.String()),
-        mimeType: t.Optional(t.String()),
-        folderId: t.Optional(t.String()),
         limit: t.Optional(t.Number()),
         offset: t.Optional(t.Number()),
       }),

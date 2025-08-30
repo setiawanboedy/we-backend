@@ -1,3 +1,5 @@
+import { SearchParams } from "./Base";
+
 export interface FolderEntity {
     id: string;
     name: string;
@@ -23,3 +25,5 @@ export interface UpdateFolderData {
     path?: string;
     parentId?: string;
 }
+
+export type SearchFolderParams = SearchParams

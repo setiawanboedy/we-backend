@@ -3,6 +3,7 @@ import type {
   CreateFolderData,
   FolderEntity,
   FolderWithChildren,
+  SearchFolderParams,
   UpdateFolderData,
 } from "../../domain/entities/Folder";
 import { LogicError, NotFoundError } from "../../domain/errors/customErrors";
@@ -21,7 +22,7 @@ export class FolderService implements IFolderService {
     return this.buildHierarchy(allFolders);
   }
 
-  async searchFolders(query: SearchFileParams): Promise<FolderEntity[]> {
+  async searchFolders(query: SearchFolderParams): Promise<FolderEntity[]> {
     return await this.folderRepository.searchFolders(query);
   }
 
@@ -135,24 +136,23 @@ export class FolderService implements IFolderService {
     const folderMap = new Map<string, FolderWithChildren>();
     const rootFolder: FolderWithChildren[] = [];
 
-    for (const folder of folders) {
-      if (!folderMap.has(folder.id)) {
-        folderMap.set(folder.id, { ...folder, children: [] });
-      }
+    folders.forEach((folder) => {
+      folderMap.set(folder.id, { ...folder, children: [] });
+    });
 
+    folders.forEach((folder) => {
       const folderWithChildren = folderMap.get(folder.id)!;
 
       if (folder.parentId) {
-        if (folderMap.has(folder.parentId)) {
-          const parent = folderMap.get(folder.parentId)!;
+        const parent = folderMap.get(folder.parentId);
+
+        if (parent) {
           parent.children.push(folderWithChildren);
-        } else {
-          rootFolder.push(folderWithChildren);
         }
       } else {
         rootFolder.push(folderWithChildren);
       }
-    }
+    });
     return rootFolder;
   }
 }

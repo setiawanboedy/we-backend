@@ -1,9 +1,8 @@
-import { SearchFileParams } from "../../domain/entities/File";
-import type { CreateFolderData, FolderEntity, FolderWithChildren, UpdateFolderData } from "../../domain/entities/Folder";
+import type { CreateFolderData, FolderEntity, FolderWithChildren, SearchFolderParams, UpdateFolderData } from "../../domain/entities/Folder";
 
 export interface IFolderService {
     getAllFolders(): Promise<FolderWithChildren[]>;
-    searchFolders(query: SearchFileParams): Promise<FolderEntity[]>;
+    searchFolders(query: SearchFolderParams): Promise<FolderEntity[]>;
     getFolderById(id: string): Promise<FolderEntity | null>;
     getFolderChildren(id: string): Promise<FolderEntity[]>;
     getRootFolders(): Promise<FolderEntity[]>;

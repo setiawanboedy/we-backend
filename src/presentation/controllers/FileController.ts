@@ -41,7 +41,6 @@ export class FileController {
 
   async searchFiles(query: SearchFileParams): Promise<ApiResponse<FileEntity[]>> {
     try {
-
       const files = await this.fileService.searchFiles(query);
       return ResponseFormatter.success(
         files,
